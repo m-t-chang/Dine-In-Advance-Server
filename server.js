@@ -25,8 +25,17 @@ app.get("/api/checkAvailable", (req, res) => {
     res.json({ payload: "hello world!" });
 });
 
-app.get("/api/booking", (req, res) => {
+app.get("/api/booking", (req, res, next) => {
     console.log("API: get booking");
+
+    // check for missing ID
+    if (typeof req.query.id === "undefined") {
+        res.status(400).send("Error. No reservation ID provided.");
+        next();
+        return;
+    }
+
+    // success
     res.send(`You sent in: ${req.query.id}`);
 });
 
