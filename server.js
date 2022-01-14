@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 //////////////////////////////////////////
-// ROUTES
+// ENDPOINTS
 //////////////////////////////////////////
 
 app.get("/api/checkAvailable", (req, res) => {
@@ -20,6 +20,8 @@ app.get("/api/checkAvailable", (req, res) => {
     res.json({ payload: "hello world!" });
 });
 
+// Expected Request is something like
+//      {{server}}/api/booking?id=12345
 app.get("/api/booking", (req, res, next) => {
     console.log("API: get booking");
 
@@ -48,6 +50,10 @@ app.delete("/api/booking", (req, res) => {
     console.log("route reached");
     res.json({ payload: "hello world!" });
 });
+
+//////////////////////////////////////////
+// START SERVER
+//////////////////////////////////////////
 
 const PORT = process.env.PORT ?? 5000;
 app.listen(PORT, () => {
