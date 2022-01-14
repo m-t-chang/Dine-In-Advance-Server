@@ -15,11 +15,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // ROUTES
 //////////////////////////////////////////
 
-app.get("/api/", (req, res) => {
-    console.log("route reached");
-    res.json({ payload: "hello world!" });
-});
-
 app.get("/api/checkAvailable", (req, res) => {
     console.log("route reached");
     res.json({ payload: "hello world!" });
