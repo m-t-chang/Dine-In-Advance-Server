@@ -19,6 +19,7 @@ module.exports = [
                 },
                 groupSize: 5,
                 specialRequests: "sometext",
+                date: "1234", //UTC time with date. other parts are ignored
                 hoursBooked: [14, 15],
                 deletedFlag: false,
             }, // edits are basically delete and new
