@@ -1,4 +1,3 @@
-// Michael: placeholder data file until we get Mongo set up
 module.exports = [
     {
         restaurantName: "Chang & Chin",
@@ -36,6 +35,19 @@ module.exports = [
                 specialRequests: "apple pie",
                 date: 1644508800, //UTC time with date. other parts are ignored. Interpreted in SG time zone
                 hoursBooked: [14],
+                deletedFlag: false,
+            }, // edits are basically delete and new
+            {
+                tableNumber: 1,
+                customerInfo: {
+                    name: "Bill Gates",
+                    email: "bill@microsoft.com",
+                    contactNo: "510 555 6779",
+                },
+                groupSize: 2,
+                specialRequests: "window seat",
+                date: 1644508800, //UTC time with date. other parts are ignored. Interpreted in SG time zone
+                hoursBooked: [15],
                 deletedFlag: false,
             }, // edits are basically delete and new
         ],

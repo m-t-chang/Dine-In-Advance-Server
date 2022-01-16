@@ -12,7 +12,7 @@ const restaurantSchema = new mongoose.Schema(
     {
         restaurantName: { type: String, required: true, unique: true },
         address: { type: String },
-        operatingHours: { type: [[Number]] }, // should be a 7x?? array
+        operatingHours: [[Number]], // should be a 7x?? array
         tables: [{ tableNumber: Number, maxGroupSize: Number }],
         bookings: [
             {

@@ -22,7 +22,7 @@ router.get("/seed", async (req, res) => {
             res.send(`db seed error: ${err.message}`);
         } else {
             console.log("added seed data");
-            res.send("db seed complete");
+            res.json(data);
         }
     });
 });
