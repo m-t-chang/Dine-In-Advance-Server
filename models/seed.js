@@ -3,15 +3,15 @@ module.exports = [
     {
         restaurantName: "Chang & Chin",
         address: "79 Anson Road, Singapore 079906",
-        operatingHours: {
-            sun: [0, 1, 12, 13, 14, 15, 16, 17, 18],
-            mon: [12, 13, 14, 15, 16, 17, 18],
-            tue: [],
-            wed: [],
-            thu: [12, 13, 14, 15, 16, 17, 18],
-            fri: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
-            sat: [0, 1, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
-        },
+        operatingHours: [
+            [0, 1, 12, 13, 14, 15, 16, 17, 18],
+            [12, 13, 14, 15, 16, 17, 18],
+            [],
+            [],
+            [12, 13, 14, 15, 16, 17, 18],
+            [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+            [0, 1, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+        ],
         tables: [
             { tableNumber: 1, maxGroupSize: 2 },
             { tableNumber: 2, maxGroupSize: 2 },
@@ -26,7 +26,6 @@ module.exports = [
         ],
         bookings: [
             {
-                _id: "generated-by-mongo",
                 tableNumber: 1,
                 customerInfo: {
                     name: "Steve Jobs",
@@ -44,15 +43,15 @@ module.exports = [
     {
         restaurantName: "Burnt Ends",
         address: "7 Dempsey Rd, #01-04, Singapore 249671",
-        operatingHours: {
-            sun: [],
-            mon: [],
-            tue: [18, 19, 20, 21, 22],
-            wed: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-            thu: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-            fri: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-            sat: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-        },
+        operatingHours: [
+            [],
+            [],
+            [18, 19, 20, 21, 22],
+            [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+            [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+            [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+            [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+        ],
         tables: [
             { tableNumber: 1, maxGroupSize: 2 },
             { tableNumber: 2, maxGroupSize: 2 },
