@@ -39,25 +39,26 @@ router.get("/booking", (req, res, next) => {
         });
 });
 
-// Expected Request Body: (same as a "booking" object in schema)
-// NOTE THIS IS OUT OF DATE
+// Expected Request Body: (similar to a "booking" object in schema)
 const examplePostBody = {
-    restaurant: "chang & chin", // note that this does not end up in the final data
-    _id: "res_1234",
-    tableNumber: 12,
-    customerInfo: {
-        name: "blah",
-        email: "blah@chicken.com",
-        contactNo: "12345",
+    restaurantName: "Chang & Chin",
+    newBooking: {
+        tableNumber: 1,
+        customerInfo: {
+            name: "Elon Musk",
+            email: "elon@tesla.com",
+            contactNo: "510 555 1111",
+        },
+        groupSize: 2,
+        specialRequests: "",
+        date: 1644508800,
+        hoursBooked: [16],
+        deletedFlag: false,
     },
-    groupSize: 5,
-    specialRequests: "sometext",
-    date: "12345", //UTC time. only the date portion will be used, since hours will be in "hoursBooked"
-    hoursBooked: [14, 15],
-    deletedFlag: false,
 };
 
-router.post("/booking", (req, res) => {
+router.post("/booking", async (req, res) => {
+    console.log("API: post booking with body: ", req.body);
     // Server will need to insert default values for things...
     //  find a table number for it, based on the restaurant, date, group size, and hours booked
     //          function (restaurant, date, groupSize, hoursBooked) {
@@ -66,12 +67,24 @@ router.post("/booking", (req, res) => {
     //                }
     //  give a reservation ID
     //  deletedFlag = false
+
     // insert into database
+    try {
+        const doc = await Restaurant.findOne({
+            restaurantName: req.body.restaurantName,
+        });
+        doc.bookings.push(req.body.newBooking);
+        const savedDoc = await doc.save();
+        console.log(`Updated: ${savedDoc}`);
+        res.json(savedDoc);
+    } catch (err) {
+        console.log("ERROR: ", err.message);
+        res.status(500).send(err);
+    }
+
     //  return...
     //      fail (status 500, with error message as JSON), or
     //      success and the inserted object, which includes ID
-    console.log("route reached");
-    res.json({ payload: "hello world!" });
 });
 
 router.patch("/booking", (req, res) => {
