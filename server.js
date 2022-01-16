@@ -11,7 +11,7 @@ mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 
 // Config
-const mongoURI = "mongodb://localhost:27017/dine-in-advance";
+const mongoURI = "mongodb://127.0.0.1:27017/dine-in-advance";
 
 // Models
 const Restaurant = require("./models/restaurant.js");
@@ -33,12 +33,6 @@ mongoose.connect(
 db.on("error", (err) => console.log(err.message + " is Mongod not running?"));
 db.on("connected", () => console.log("mongo connected: ", mongoURI));
 db.on("disconnected", () => console.log("mongo disconnected"));
-
-// run a mongo create
-Restaurant.create({ name: "test rest" }, (err, data) => {
-    if (err) console.log(err.message);
-    console.log("added one data");
-});
 
 //////////////////////////////////////////
 // EXPRESS
