@@ -7,14 +7,51 @@ const Booking = require("../models/booking");
 function listOfBookingIDs() {
     return Booking.find({}).select({ _id: 1 }).exec();
 }
+
+function respondWithDocOrError(res) {
+    return (err, doc) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json(doc);
+        }
+    };
+}
+
 //////////////////////////////////////////
 // ENDPOINTS
 //////////////////////////////////////////
 
-router.get("/checkAvailable", (req, res) => {
-    console.log("route reached");
-    res.json({ payload: "hello world!" });
-    // return things in arrays
+router.get("/checkAvailable", async (req, res) => {
+    /*
+
+    Inputs (keys in req.body) -> Outputs
+    ------------------------------------
+    {} -> [ restaurants ]
+    { restaurantName: String, groupSize: integer, date: unix time in seconds } -> [ times as integers ]
+
+    */
+    console.log("API: checkAvailable route reached, with body: ", req.body);
+
+    if (typeof req.body.restaurantName === "undefined") {
+        // RETURN: all restaurants
+        Restaurant.find()
+            .select({ restaurantName: 1 })
+            .exec(respondWithDocOrError(res));
+    } else if (
+        typeof req.body.groupSize !== "undefined" &&
+        typeof req.body.date !== "undefined"
+    ) {
+        // RETURN: array of times for the given date
+        // NOTE: does not check against existing reservations
+        const bookingDate = new Date(req.body.date * 1000);
+        const thisRestaurant = await Restaurant.findOne({
+            restaurantName: req.body.restaurantName,
+        });
+        res.json(thisRestaurant.operatingHours[bookingDate.getDay()]);
+    } else {
+        res.send("Unknown Error");
+    }
 });
 
 // Expected Request is something like
@@ -71,8 +108,8 @@ router.post("/booking", async (req, res) => {
     });
 });
 
-router.patch("/booking", (req, res) => {
-    console.log("route reached");
+router.patch("/booking", (req, res, next) => {
+    console.log("API: patch endpoint reached");
     res.json({ payload: "hello world!" });
 });
 
