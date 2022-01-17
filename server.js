@@ -12,10 +12,7 @@ const db = mongoose.connection;
 
 // Config
 const mongoURI = "mongodb://127.0.0.1:27017/dine-in-advance";
-
-// Models
-const Restaurant = require("./models/restaurant.js");
-//const hotelSeed = require("./models/seed.js");
+// const mongoURI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.g7nbg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
 // Connect to Mongo
 mongoose.connect(

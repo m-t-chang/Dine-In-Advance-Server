@@ -1,6 +1,8 @@
 const express = require("express");
-const Restaurant = require("../models/restaurant");
 const router = express.Router();
+
+const Restaurant = require("../models/restaurant");
+const Booking = require("../models/booking");
 
 //////////////////////////////////////////
 // ENDPOINTS
@@ -43,7 +45,7 @@ router.get("/booking", (req, res, next) => {
 const examplePostBody = {
     restaurantName: "Chang & Chin",
     newBooking: {
-        tableNumber: 1,
+        // tableNumber: 1,
         customerInfo: {
             name: "Elon Musk",
             email: "elon@tesla.com",
@@ -53,13 +55,15 @@ const examplePostBody = {
         specialRequests: "",
         date: 1644508800,
         hoursBooked: [16],
-        deletedFlag: false,
+        // deletedFlag: false,
     },
 };
 
 router.post("/booking", async (req, res) => {
     console.log("API: post booking with body: ", req.body);
     // Server will need to insert default values for things...
+
+    // // check whether its valid reservation available
     //  find a table number for it, based on the restaurant, date, group size, and hours booked
     //          function (restaurant, date, groupSize, hoursBooked) {
     //                    if found, return tableNumber

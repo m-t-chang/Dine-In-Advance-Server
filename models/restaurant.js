@@ -14,21 +14,6 @@ const restaurantSchema = new mongoose.Schema(
         address: { type: String },
         operatingHours: [[Number]], // should be a 7x?? array
         tables: [{ tableNumber: Number, maxGroupSize: Number }],
-        bookings: [
-            {
-                tableNumber: Number,
-                customerInfo: {
-                    name: String,
-                    email: String,
-                    contactNo: String,
-                },
-                groupSize: Number,
-                specialRequests: String,
-                date: Number, //UTC time with date. other parts are ignored. Interpreted in SG time zone
-                hoursBooked: [Number],
-                deletedFlag: Boolean,
-            },
-        ],
     },
     { timestamps: true }
 );

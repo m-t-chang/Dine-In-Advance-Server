@@ -3,7 +3,9 @@ const router = express.Router();
 
 // Mongoose Models
 const Restaurant = require("../models/restaurant.js");
-const seedData = require("../models/seed.js");
+const Booking = require("../models/booking.js");
+const seedRestaurants = require("../models/seedRestaurants.js");
+const seedBookings = require("../models/seedBookings.js");
 
 //////////////////////////////////////////
 // ENDPOINTS
@@ -12,19 +14,19 @@ const seedData = require("../models/seed.js");
 router.get("/seed", async (req, res) => {
     console.log("seed route reached");
 
-    // drop db
-    await Restaurant.collection.drop();
+    try {
+        const jsonToSend = {};
 
-    // load seed data
-    await Restaurant.create(seedData, (err, data) => {
-        if (err) {
-            console.log(err.message);
-            res.send(`db seed error: ${err.message}`);
-        } else {
-            console.log("added seed data");
-            res.json(data);
-        }
-    });
+        await Restaurant.collection.drop();
+        jsonToSend.Restaurant = await Restaurant.insertMany(seedRestaurants);
+
+        await Booking.collection.drop();
+        jsonToSend.Booking = await Booking.insertMany(seedBookings);
+
+        res.json(jsonToSend);
+    } catch (err) {
+        res.send(err);
+    }
 });
 
 //////////////////////////////////////////
