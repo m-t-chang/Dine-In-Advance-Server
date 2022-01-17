@@ -4,6 +4,9 @@ const router = express.Router();
 const Restaurant = require("../models/restaurant");
 const Booking = require("../models/booking");
 
+function listOfBookingIDs() {
+    return Booking.find({}).select({ _id: 1 }).exec();
+}
 //////////////////////////////////////////
 // ENDPOINTS
 //////////////////////////////////////////
@@ -16,32 +19,27 @@ router.get("/checkAvailable", (req, res) => {
 
 // Expected Request is something like
 //      {{server}}/api/booking?id=12345
-// Returns the booking with the ID. But it's still structured like the Restaurant schema
+// Returns the booking with the ID.
 router.get("/booking", async (req, res, next) => {
     console.log("API: get booking");
 
     // check for missing ID
     if (typeof req.query.id === "undefined") {
-        // get list of IDs
-        const listOfBookingIDs = await Booking.find({})
-            .select({ _id: 1 })
-            .exec();
-
         res.status(400).json({
             status: 400,
             message: "Error. No reservation ID provided.",
-            bookingIDs: listOfBookingIDs,
+            bookingIDs: await listOfBookingIDs(),
         });
         next();
         return;
     }
 
     // find the ID, and send response
-    Booking.findById(req.query.id).exec((err, restaurant) => {
+    Booking.findOne(req.query.id).exec((err, doc) => {
         if (err) {
             res.send(err);
         } else {
-            res.json(restaurant);
+            res.json(doc);
         }
     });
 });
@@ -78,10 +76,35 @@ router.patch("/booking", (req, res) => {
     res.json({ payload: "hello world!" });
 });
 
-router.delete("/booking", (req, res) => {
+// Delete endpoint
+// will check if the document is already deleted, and return an error if so
+router.delete("/booking", async (req, res, next) => {
+    console.log("API: delete endpoint reached");
+
+    // check for missing ID
+    if (typeof req.query.id === "undefined") {
+        res.status(400).json({
+            status: 400,
+            message: "Error. No reservation ID provided.",
+            bookingIDs: await listOfBookingIDs(),
+        });
+        next();
+        return;
+    }
+
     // find the booking, set deletedFlag = true
-    console.log("route reached");
-    res.json({ payload: "hello world!" });
+    try {
+        const doc = await Booking.findById(req.query.id);
+        if (doc.deletedFlag === true) {
+            res.send("Warning: Booking is already deleted, no changes made");
+        } else {
+            doc.deletedFlag = true;
+            const savedDoc = await doc.save();
+            res.json(savedDoc);
+        }
+    } catch (err) {
+        res.send(err);
+    }
 });
 
 //////////////////////////////////////////
