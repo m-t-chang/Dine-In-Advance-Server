@@ -72,7 +72,7 @@ router.get("/booking", async (req, res, next) => {
     }
 
     // find the ID, and send response
-    Booking.findOne(req.query.id).exec((err, doc) => {
+    Booking.findById(req.query.id).exec((err, doc) => {
         if (err) {
             res.send(err);
         } else {
