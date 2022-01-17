@@ -16,29 +16,33 @@ router.get("/checkAvailable", (req, res) => {
 // Expected Request is something like
 //      {{server}}/api/booking?id=12345
 // Returns the booking with the ID. But it's still structured like the Restaurant schema
-router.get("/booking", (req, res, next) => {
+router.get("/booking", async (req, res, next) => {
     console.log("API: get booking");
 
     // check for missing ID
     if (typeof req.query.id === "undefined") {
+        // get list of IDs
+        const listOfBookingIDs = await Booking.find({})
+            .select({ _id: 1 })
+            .exec();
+
         res.status(400).json({
             status: 400,
             message: "Error. No reservation ID provided.",
+            bookingIDs: listOfBookingIDs,
         });
         next();
         return;
     }
 
     // find the ID, and send response
-    Restaurant.find({ "bookings._id": req.query.id })
-        .select({ "bookings.$": 1 })
-        .exec((err, restaurant) => {
-            if (err) {
-                res.send(err);
-            } else {
-                res.json(restaurant);
-            }
-        });
+    Booking.findById(req.query.id).exec((err, restaurant) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json(restaurant);
+        }
+    });
 });
 
 // Expected Request Body: (similar to a "booking" object in schema)
