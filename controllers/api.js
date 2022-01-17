@@ -11,6 +11,7 @@ const Booking = require("../models/booking");
 router.get("/checkAvailable", (req, res) => {
     console.log("route reached");
     res.json({ payload: "hello world!" });
+    // return things in arrays
 });
 
 // Expected Request is something like
@@ -45,27 +46,10 @@ router.get("/booking", async (req, res, next) => {
     });
 });
 
-// Expected Request Body: (similar to a "booking" object in schema)
-const examplePostBody = {
-    restaurantName: "Chang & Chin",
-    newBooking: {
-        // tableNumber: 1,
-        customerInfo: {
-            name: "Elon Musk",
-            email: "elon@tesla.com",
-            contactNo: "510 555 1111",
-        },
-        groupSize: 2,
-        specialRequests: "",
-        date: 1644508800,
-        hoursBooked: [16],
-        // deletedFlag: false,
-    },
-};
-
+// Expected Request Body is just a Booking document (see the Booking schema), but without tableNumber or deletedFlag
+// We are using the MongoDB-generated "_id" as the reservation number to pass to the user
 router.post("/booking", async (req, res) => {
     console.log("API: post booking with body: ", req.body);
-    // Server will need to insert default values for things...
 
     // // check whether its valid reservation available
     //  find a table number for it, based on the restaurant, date, group size, and hours booked
@@ -73,26 +57,20 @@ router.post("/booking", async (req, res) => {
     //                    if found, return tableNumber
     //                      otherwise return "no table found"
     //                }
-    //  give a reservation ID
-    //  deletedFlag = false
+
+    // set deletedFlag = false
+    req.body.deletedFlag = false;
 
     // insert into database
-    try {
-        const doc = await Restaurant.findOne({
-            restaurantName: req.body.restaurantName,
-        });
-        doc.bookings.push(req.body.newBooking);
-        const savedDoc = await doc.save();
-        console.log(`Updated: ${savedDoc}`);
-        res.json(savedDoc);
-    } catch (err) {
-        console.log("ERROR: ", err.message);
-        res.status(500).send(err);
-    }
-
-    //  return...
-    //      fail (status 500, with error message as JSON), or
-    //      success and the inserted object, which includes ID
+    Booking.create(req.body, (err, doc) => {
+        if (err) {
+            console.log("ERROR: ", err.message);
+            res.status(500).send(err);
+        } else {
+            console.log(`Updated: ${doc}`);
+            res.json(doc);
+        }
+    });
 });
 
 router.patch("/booking", (req, res) => {
