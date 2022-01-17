@@ -108,8 +108,14 @@ router.post("/booking", async (req, res) => {
     });
 });
 
+// Update endpoint
 router.patch("/booking", (req, res, next) => {
     console.log("API: patch endpoint reached");
+
+    // take the req.body and put it in the matching Booking
+
+    // LEAVING THIS FOR REX
+
     res.json({ payload: "hello world!" });
 });
 
