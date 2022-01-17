@@ -11,8 +11,8 @@ mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 
 // Config
-//const mongoURI = "mongodb://127.0.0.1:27017/dine-in-advance";
-const mongoURI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.g7nbg.mongodb.net/dine-in-advance?retryWrites=true&w=majority`;
+const mongoURI =
+    process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017/dine-in-advance";
 
 // Connect to Mongo
 mongoose.connect(
