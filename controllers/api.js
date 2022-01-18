@@ -25,28 +25,31 @@ function respondWithDocOrError(res) {
 router.get("/checkAvailable", async (req, res) => {
     /*
 
-    Inputs (keys in req.body) -> Outputs
+    Inputs (keys in req.query) -> Outputs
     ------------------------------------
     {} -> [ restaurants ]
     { restaurantName: String, groupSize: integer, date: unix time in seconds } -> [ times as integers ]
 
     */
-    console.log("API: checkAvailable route reached, with body: ", req.body);
+    console.log(
+        "API: checkAvailable route reached, with query string: ",
+        req.query
+    );
 
-    if (typeof req.body.restaurantName === "undefined") {
+    if (typeof req.query.restaurantName === "undefined") {
         // RETURN: all restaurants
         Restaurant.find()
             .select({ restaurantName: 1 })
             .exec(respondWithDocOrError(res));
     } else if (
-        typeof req.body.groupSize !== "undefined" &&
-        typeof req.body.date !== "undefined"
+        typeof req.query.groupSize !== "undefined" &&
+        typeof req.query.date !== "undefined"
     ) {
         // RETURN: array of times for the given date
         // NOTE: does not check against existing reservations
-        const bookingDate = new Date(req.body.date * 1000);
+        const bookingDate = new Date(req.query.date * 1000);
         const thisRestaurant = await Restaurant.findOne({
-            restaurantName: req.body.restaurantName,
+            restaurantName: req.query.restaurantName,
         });
         res.json(thisRestaurant.operatingHours[bookingDate.getDay()]);
     } else {
@@ -92,6 +95,7 @@ router.post("/booking", async (req, res) => {
     //                    if found, return tableNumber
     //                      otherwise return "no table found"
     //                }
+    req.body.tableNumber = 99; // placeholder
 
     // set deletedFlag = false
     req.body.deletedFlag = false;
