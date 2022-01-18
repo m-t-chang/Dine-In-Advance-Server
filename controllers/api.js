@@ -114,13 +114,37 @@ router.post("/booking", async (req, res) => {
 
 // Update endpoint
 router.patch("/booking", (req, res, next) => {
-    console.log("API: patch endpoint reached");
-
+    console.log("API: patch endpoint reached", req.body);
+    // req.body should return booking id
+    // let's say key is "bookingId"
+    const bookingId = req.body.bookingId;
     // take the req.body and put it in the matching Booking
-
-    // LEAVING THIS FOR REX
-
-    res.json({ payload: "hello world!" });
+    Booking.findOneAndUpdate(
+        { _id: bookingId },
+        {
+            $set: {
+                customerInfo: {
+                    name: req.body.name,
+                    email: req.body.email,
+                    contactNo: req.body.phone,
+                },
+                groupSize: req.body.group,
+                specialRequests: req.body.req,
+                date: new Date(req.body.date).getTime(),
+                hoursBooked: [req.body.time],
+                restaurantName: req.body.restaurant,
+            },
+        },
+        (err, doc) => {
+            if (err) {
+                console.log("ERROR: ", err.message);
+                res.status(500).send(err);
+            } else {
+                console.log(`Updated: ${doc}`);
+                res.json(doc);
+            }
+        }
+    );
 });
 
 // Delete endpoint
