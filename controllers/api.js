@@ -69,6 +69,7 @@ router.post("/booking", async (req, res) => {
   //  deletedFlag = false
 
   // insert into database
+
   try {
     const doc = await Restaurant.findOne({
       restaurantName: req.body.restaurantName,
