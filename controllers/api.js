@@ -11,7 +11,7 @@ function listOfBookingIDs() {
 function respondWithDocOrError(res) {
     return (err, doc) => {
         if (err) {
-            res.send(err);
+            res.json(err);
         } else {
             res.json(doc);
         }
@@ -53,7 +53,7 @@ router.get("/checkAvailable", async (req, res) => {
         });
         res.json(thisRestaurant.operatingHours[bookingDate.getDay()]);
     } else {
-        res.send("Unknown Error");
+        res.json({ message: "Unknown Error" });
     }
 });
 
@@ -77,7 +77,7 @@ router.get("/booking", async (req, res, next) => {
     // find the ID, and send response
     Booking.findById(req.query.id).exec((err, doc) => {
         if (err) {
-            res.send(err);
+            res.json(err);
         } else {
             res.json(doc);
         }
@@ -167,14 +167,16 @@ router.delete("/booking", async (req, res, next) => {
     try {
         const doc = await Booking.findById(req.query.id);
         if (doc.deletedFlag === true) {
-            res.send("Warning: Booking is already deleted, no changes made");
+            res.json({
+                message: "Warning: Booking is already deleted, no changes made",
+            });
         } else {
             doc.deletedFlag = true;
             const savedDoc = await doc.save();
             res.json(savedDoc);
         }
     } catch (err) {
-        res.send(err);
+        res.json(err);
     }
 });
 
