@@ -1,5 +1,6 @@
 require("dotenv").config();
 const path = require("path");
+const cors = require("cors");
 
 //////////////////////////////////////////
 // MONGOOSE
@@ -41,12 +42,15 @@ const apiController = require("./controllers/api.js");
 const dbController = require("./controllers/db.js");
 const app = express();
 
+// cors
+app.use(cors());
+
 // body-parser middleware
-app.use(express.urlencoded({ extended: false }));
+//app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // static files
-app.use(express.static(path.join(__dirname, "public")));
+//app.use(express.static(path.join(__dirname, "public")));
 
 // import API endpoints
 app.use("/api", apiController);
