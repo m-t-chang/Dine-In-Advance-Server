@@ -50,8 +50,8 @@ router.get("/test/full", async (req, res) => {
     };
 
     try {
-        // send this to POST 10 times.
-        for (let i = 0; i < 12; i++)
+        // send this to POST multiple times.
+        for (let i = 0; i < 2; i++)
             fetch("http://localhost:5000/api/booking", {
                 method: "POST",
                 headers: {
