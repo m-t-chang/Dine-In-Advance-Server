@@ -47,6 +47,14 @@ router.get("/checkAvailable", async (req, res) => {
                 .exec(respondWithDocOrError(res));
         }
         case "time": {
+            // Michael's code
+            const operatingHours = await Restaurant.findOne({
+                restaurantName: req.query.restaurantName,
+            });
+            const bookings = await Booking.findOne({
+                restaurantName: req.query.restaurantName,
+            });
+            console.log(operatingHours, bookings);
         }
     }
 
@@ -62,7 +70,7 @@ router.get("/checkAvailable", async (req, res) => {
     ) {
         // RETURN: array of times for the given date
         // NOTE: does not check against existing reservations
-        const bookingDate = new Date(req.query.date * 1000);
+        const bookingDate = new Date(req.query.date);
         const thisRestaurant = await Restaurant.findOne({
             restaurantName: req.query.restaurantName,
         });

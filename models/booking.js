@@ -9,7 +9,7 @@ const bookingSchema = new mongoose.Schema(
         },
         groupSize: Number,
         specialRequests: String,
-        date: Number, //unix time (seconds) with date. other parts are ignored. Interpreted in SG time zone
+        date: String, // ISO date like 2022-12-25
         hoursBooked: [Number],
         restaurantName: { type: String, required: true },
         tableNumber: Number,
