@@ -31,11 +31,26 @@ router.get("/checkAvailable", async (req, res) => {
     { restaurantName: String, groupSize: integer, date: unix time in seconds } -> [ times as integers ]
 
     */
-    console.log(
-        "API: checkAvailable route reached, with query string: ",
-        req.query
-    );
+    console.log("API: checkAvailable route reached, with body of: ", req.body);
 
+    switch (req.body.checker) {
+        case "restaurant": {
+            Restaurant.find()
+                .select({ restaurantName: 1 })
+                .exec(respondWithDocOrError(res));
+        }
+        case "group": {
+            Restaurant.findOne({
+                restaurantName: req.body.restaurantState,
+            })
+                .select({ tables: 1 })
+                .exec(respondWithDocOrError(res));
+        }
+        case "time": {
+        }
+    }
+
+    // Michael Older Codes
     if (typeof req.query.restaurantName === "undefined") {
         // RETURN: all restaurants
         Restaurant.find()
