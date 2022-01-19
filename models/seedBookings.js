@@ -7,12 +7,12 @@ module.exports = [
         },
         groupSize: 2,
         specialRequests: "apple pie",
-        date: 1644508800, //UTC time with date. other parts are ignored. Interpreted in SG time zone
+        date: "2022-02-10",
         hoursBooked: [14],
         restaurantName: "Chang & Chin",
         tableNumber: 1,
         deletedFlag: false,
-    }, // edits are basically delete and new
+    },
     {
         customerInfo: {
             name: "Bill Gates",
@@ -21,10 +21,10 @@ module.exports = [
         },
         groupSize: 2,
         specialRequests: "window seat",
-        date: 1644508800, //UTC time with date. other parts are ignored. Interpreted in SG time zone
+        date: "2022-02-10",
         hoursBooked: [15],
         restaurantName: "Chang & Chin",
         tableNumber: 1,
         deletedFlag: false,
-    }, // edits are basically delete and new
+    },
 ];
