@@ -128,22 +128,22 @@ router.post("/booking", async (req, res) => {
     console.log("API: post booking with body: ", req.body);
 
     const bookingAtSameTime = await Booking.find({
-        restaurantName: req.body.restaurant,
+        restaurantName: req.body.restaurantName,
         date: req.body.date,
-        hoursBooked: req.body.time,
-        groupSize: { $gte: req.body.group },
+        hoursBooked: [req.body.hoursBooked[0]],
+        groupSize: { $gte: req.body.groupSize },
     })
         .select({ tableNumber: 1 })
         .exec();
 
     const availTables = await Restaurant.find({
-        restaurantName: req.body.restaurant,
+        restaurantName: req.body.restaurantName,
     })
         .select({ tables: 1 })
         .exec();
 
-    const availFittingTables = availTables.filter(
-        (x) => x.maxGroupSize >= req.body.group
+    let availFittingTables = availTables.filter(
+        (x) => x.maxGroupSize >= req.body.groupSize
     );
 
     for (let booking of bookingAtSameTime) {
@@ -156,7 +156,9 @@ router.post("/booking", async (req, res) => {
         (a, b) => b.maxGroupSize - a.maxGroupSize
     );
 
-    req.body.tableNumber = sortedTables[0].tableNumber;
+    const tableNumber = sortedTables[0] ? sortedTables[0].tableNumber : -1;
+
+    req.body.tableNumber = tableNumber;
 
     // // check whether its valid reservation available
     //  find a table number for it, based on the restaurant, date, group size, and hours booked
