@@ -22,7 +22,7 @@ function respondWithDocOrError(res) {
 // ENDPOINTS
 //////////////////////////////////////////
 
-router.get("/checkAvailable", async (req, res) => {
+router.post("/checkAvailable", async (req, res) => {
     /*
 
     Inputs (keys in req.query) -> Outputs
@@ -38,27 +38,29 @@ router.get("/checkAvailable", async (req, res) => {
             Restaurant.find()
                 .select({ restaurantName: 1 })
                 .exec(respondWithDocOrError(res));
+            break;
         }
+
         case "group": {
             Restaurant.findOne({
                 restaurantName: req.body.restaurantState,
             })
                 .select({ tables: 1 })
                 .exec(respondWithDocOrError(res));
+            break;
         }
         case "time": {
-            const restaurantArr = await Restaurant.findOne({
+            const restaurantObj = await Restaurant.findOne({
                 restaurantName: req.body.restaurantState,
             })
                 .select({ operatingHours: 1, tables: 1 })
                 .exec();
 
-            const bookingDay = new Date(req.query.date * 1000).getDay();
-            const restaurantHours = restaurantArr.operatingHours[bookingDay];
-            const maxFittingTables =
-                restaurantArr.tables.filter(
-                    (x) => x.maxGroupSize >= req.body.groupState
-                ).length + 1;
+            const bookingDay = new Date(req.body.dateState).getDay();
+            const restaurantHours = restaurantObj.operatingHours[bookingDay];
+            const maxFittingTables = restaurantObj.tables.filter(
+                (x) => x.maxGroupSize >= req.body.groupState
+            ).length;
 
             const bookingsOnSameDayArr = await Booking.find({
                 restaurantName: req.body.restaurantState,
@@ -88,36 +90,8 @@ router.get("/checkAvailable", async (req, res) => {
             }
 
             res.send(restaurantHours);
-            // Michael's code
-            const operatingHours = await Restaurant.findOne({
-                restaurantName: req.query.restaurantName,
-            });
-            const bookings = await Booking.findOne({
-                restaurantName: req.query.restaurantName,
-            });
-            console.log(operatingHours, bookings);
+            break;
         }
-    }
-
-    // Michael Older Codes
-    if (typeof req.query.restaurantName === "undefined") {
-        // RETURN: all restaurants
-        Restaurant.find()
-            .select({ restaurantName: 1 })
-            .exec(respondWithDocOrError(res));
-    } else if (
-        typeof req.query.groupSize !== "undefined" &&
-        typeof req.query.date !== "undefined"
-    ) {
-        // RETURN: array of times for the given date
-        // NOTE: does not check against existing reservations
-        const bookingDate = new Date(req.query.date);
-        const thisRestaurant = await Restaurant.findOne({
-            restaurantName: req.query.restaurantName,
-        });
-        res.json(thisRestaurant.operatingHours[bookingDate.getDay()]);
-    } else {
-        res.json({ message: "Unknown Error" });
     }
 });
 
@@ -153,13 +127,43 @@ router.get("/booking", async (req, res, next) => {
 router.post("/booking", async (req, res) => {
     console.log("API: post booking with body: ", req.body);
 
+    const bookingAtSameTime = await Booking.find({
+        restaurantName: req.body.restaurant,
+        date: req.body.date,
+        hoursBooked: req.body.time,
+        groupSize: { $gte: req.body.group },
+    })
+        .select({ tableNumber: 1 })
+        .exec();
+
+    const availTables = await Restaurant.find({
+        restaurantName: req.body.restaurant,
+    })
+        .select({ tables: 1 })
+        .exec();
+
+    const availFittingTables = availTables.filter(
+        (x) => x.maxGroupSize >= req.body.group
+    );
+
+    for (let booking of bookingAtSameTime) {
+        availFittingTables = availFittingTables.filter(
+            (x) => x.tableNumber != booking.tableNumber
+        );
+    }
+
+    const sortedTables = availFittingTables.sort(
+        (a, b) => b.maxGroupSize - a.maxGroupSize
+    );
+
+    req.body.tableNumber = sortedTables[0].tableNumber;
+
     // // check whether its valid reservation available
     //  find a table number for it, based on the restaurant, date, group size, and hours booked
     //          function (restaurant, date, groupSize, hoursBooked) {
     //                    if found, return tableNumber
     //                      otherwise return "no table found"
     //                }
-    req.body.tableNumber = 99; // placeholder
 
     // set deletedFlag = false
     req.body.deletedFlag = false;
