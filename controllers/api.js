@@ -47,6 +47,47 @@ router.get("/checkAvailable", async (req, res) => {
                 .exec(respondWithDocOrError(res));
         }
         case "time": {
+            const restaurantArr = await Restaurant.findOne({
+                restaurantName: req.body.restaurantState,
+            })
+                .select({ operatingHours: 1, tables: 1 })
+                .exec();
+
+            const bookingDay = new Date(req.query.date * 1000).getDay();
+            const restaurantHours = restaurantArr.operatingHours[bookingDay];
+            const maxFittingTables =
+                restaurantArr.tables.filter(
+                    (x) => x.maxGroupSize >= req.body.groupState
+                ).length + 1;
+
+            const bookingsOnSameDayArr = await Booking.find({
+                restaurantName: req.body.restaurantState,
+                date: req.body.dateState,
+                group: { $gte: req.body.groupState },
+            })
+                .select({ hoursBooked: 1 })
+                .exec();
+
+            const bookedHours = bookingsOnSameDayArr.map((x) => {
+                x.hoursBooked[0];
+            });
+            const counts = {};
+            for (let hour of bookedHours) {
+                counts[hour] = counts[hour] ? counts[hour] + 1 : 1;
+            }
+            const counterArr = Object.entries(counts);
+            const fullHours = [];
+            for (let hour of counterArr) {
+                if (hour[1] >= maxFittingTables) {
+                    fullHours.push(hour[0]);
+                }
+            }
+
+            for (let fullHour of fullHours) {
+                restaurantHours = restaurantHours.filter((x) => x != fullHour);
+            }
+
+            res.send(restaurantHours);
         }
     }
 
