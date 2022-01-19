@@ -78,7 +78,7 @@ router.get("/checkAvailable", async (req, res) => {
             const counterArr = Object.entries(counts);
             const fullHours = [];
             for (let hour of counterArr) {
-                if (hour[1] >= maxFittingTables) {
+                if (hour[1] === maxFittingTables) {
                     fullHours.push(hour[0]);
                 }
             }
