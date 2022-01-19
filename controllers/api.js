@@ -136,15 +136,23 @@ router.post("/booking", async (req, res) => {
         .select({ tableNumber: 1 })
         .exec();
 
+    // console.log("bookingAtSameTime: ", bookingAtSameTime);
+
     const availTables = await Restaurant.find({
         restaurantName: req.body.restaurantName,
     })
         .select({ tables: 1 })
         .exec();
 
-    let availFittingTables = availTables.filter(
+    // console.log("availTables: ", availTables);
+
+    let availFittingTables = availTables[0].tables.filter(
         (x) => x.maxGroupSize >= req.body.groupSize
     );
+
+    // console.log("req.body.groupSize: ", req.body.groupSize);
+    // console.log("availTables[0].tables: ", availTables[0].tables);
+    // console.log("availFittingTables: ", availFittingTables);
 
     for (let booking of bookingAtSameTime) {
         availFittingTables = availFittingTables.filter(
@@ -153,7 +161,7 @@ router.post("/booking", async (req, res) => {
     }
 
     const sortedTables = availFittingTables.sort(
-        (a, b) => b.maxGroupSize - a.maxGroupSize
+        (a, b) => a.maxGroupSize - b.maxGroupSize
     );
 
     const tableNumber = sortedTables[0] ? sortedTables[0].tableNumber : -1;
