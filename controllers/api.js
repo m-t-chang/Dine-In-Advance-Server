@@ -57,7 +57,7 @@ router.post("/checkAvailable", async (req, res) => {
                 .exec();
 
             const bookingDay = new Date(req.body.dateState).getDay();
-            const restaurantHours = restaurantObj.operatingHours[bookingDay];
+            let restaurantHours = restaurantObj.operatingHours[bookingDay];
             const maxFittingTables = restaurantObj.tables.filter(
                 (x) => x.maxGroupSize >= req.body.groupState
             ).length;
@@ -70,20 +70,24 @@ router.post("/checkAvailable", async (req, res) => {
                 .select({ hoursBooked: 1 })
                 .exec();
 
-            const bookedHours = bookingsOnSameDayArr.map((x) => {
-                x.hoursBooked[0];
-            });
+            console.log(bookingsOnSameDayArr);
+            const bookedHours = bookingsOnSameDayArr.map(
+                (x) => x.hoursBooked[0]
+            );
+            console.log(bookedHours);
             const counts = {};
             for (let hour of bookedHours) {
                 counts[hour] = counts[hour] ? counts[hour] + 1 : 1;
             }
+            console.log(counts);
             const counterArr = Object.entries(counts);
             const fullHours = [];
             for (let hour of counterArr) {
-                if (hour[1] === maxFittingTables) {
+                if (hour[1] >= maxFittingTables) {
                     fullHours.push(hour[0]);
                 }
             }
+            console.log(fullHours);
 
             for (let fullHour of fullHours) {
                 restaurantHours = restaurantHours.filter((x) => x != fullHour);
