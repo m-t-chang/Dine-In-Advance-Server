@@ -1,8 +1,3 @@
-# GA-SEI33-P3
+# Dine In Advance - Server
 
-project 3
-
-Hi nice to meet u, Rex here.
-
-pizza slice
-apple cider
+Backend server for Dine In Advance, a restaurant reservation app. The frontend UI can be found at https://github.com/r3x6/Dine-In-Advance-React.
